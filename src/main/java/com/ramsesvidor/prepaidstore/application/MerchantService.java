@@ -57,28 +57,24 @@ public class MerchantService {
                                               @DecimalMin("0.01") BigDecimal price,
                                               @Min(1) Integer stock) {
         Account merchant = findById(merchantId);
-
         Product product = productService.findById(sku);
-
         MerchantProductId id = new MerchantProductId(merchant.getId(), product.getSku());
 
         if (merchantProductRepository.existsById(id)) {
             throw new IllegalArgumentException("Merchant already selling this product SKU: " + product.getSku());
         }
 
-        MerchantProduct merchantProduct = new MerchantProduct(merchant.getId(), product.getSku(), price, stock);
-        merchantProductRepository.save(merchantProduct);
-        return merchantProduct;
+        return merchantProductRepository.save(new MerchantProduct(merchant.getId(), product.getSku(), price, stock));
     }
 
     @Transactional
-    public void decreaseStock(@Valid MerchantProduct merchantProduct, @Min(1) Integer quantity) {
+    public MerchantProduct decreaseStock(@Valid MerchantProduct merchantProduct, @Min(1) Integer quantity) {
         if (merchantProduct.getStock() < quantity) {
             throw new IllegalArgumentException("Not enough stock.");
         }
 
         merchantProduct.setStock(merchantProduct.getStock() - quantity);
-        merchantProductRepository.save(merchantProduct);
+        return merchantProductRepository.save(merchantProduct);
     }
 
     @Scheduled(cron = "0 0 2 * * *") // Every day at 2AM

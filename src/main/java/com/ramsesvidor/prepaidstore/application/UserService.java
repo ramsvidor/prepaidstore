@@ -1,6 +1,5 @@
 package com.ramsesvidor.prepaidstore.application;
 
-import com.ramsesvidor.prepaidstore.common.exception.NotFoundException;
 import com.ramsesvidor.prepaidstore.domain.Account;
 import com.ramsesvidor.prepaidstore.domain.MerchantProduct;
 import lombok.RequiredArgsConstructor;

@@ -30,9 +30,7 @@ public class ProductService {
             throw new IllegalArgumentException("Product with SKU already exists: " + sku);
         }
 
-        Product product = new Product(sku, name);
-        productRepository.save(product);
-        return product;
+        return productRepository.save(new Product(sku, name));
     }
 
 }

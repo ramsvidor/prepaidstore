@@ -21,9 +21,7 @@ public class AccountService {
 
     @Transactional
     public Account createAccount(@NotBlank String name, @NotNull AccountType accountType) {
-        Account account = new Account(UUID.randomUUID(), name, accountType);
-        accountRepository.save(account);
-        return account;
+        return accountRepository.save(new Account(UUID.randomUUID(), name, accountType));
     }
 
     public Account findById(@NotBlank String id) {

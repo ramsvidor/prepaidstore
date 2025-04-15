@@ -24,9 +24,9 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     @Transactional
-    public void purchase(@NotNull Account user,
-                         @NotNull Account merchant,
-                         @NotNull BigDecimal totalAmount) {
+    public Transaction purchase(@NotNull Account user,
+                                @NotNull Account merchant,
+                                @NotNull BigDecimal totalAmount) {
         if (user.getAccountType() != AccountType.USER) {
             throw new IllegalArgumentException("Only USER accounts can purchase.");
         }
@@ -35,16 +35,16 @@ public class TransactionService {
             throw new IllegalArgumentException("Only MERCHANT accounts can sell.");
         }
 
-        save(user.getId(), merchant.getId(), totalAmount, TransactionType.PURCHASE);
+        return save(user.getId(), merchant.getId(), totalAmount, TransactionType.PURCHASE);
     }
 
     @Transactional
-    public void recharge(Account user, BigDecimal amount) {
+    public Transaction recharge(Account user, BigDecimal amount) {
         if (user.getAccountType() != AccountType.USER) {
             throw new IllegalArgumentException("Only USER accounts can be recharged.");
         }
 
-        save(SYSTEM_ACCOUNT_ID, user.getId(), amount, TransactionType.RECHARGE);
+        return save(SYSTEM_ACCOUNT_ID, user.getId(), amount, TransactionType.RECHARGE);
     }
 
     public BigDecimal calculateAccountBalance(String accountId) {
@@ -55,8 +55,8 @@ public class TransactionService {
         return sumCredits(accountId, currency).subtract(sumDebits(accountId, currency));
     }
 
-    private void save(UUID from, UUID to, BigDecimal amount, TransactionType trxType) {
-        transactionRepository.save(new Transaction(
+    private Transaction save(UUID from, UUID to, BigDecimal amount, TransactionType trxType) {
+        return transactionRepository.save(new Transaction(
                 UUID.randomUUID(),
                 from,
                 to,
